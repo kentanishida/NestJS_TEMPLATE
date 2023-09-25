@@ -24,7 +24,8 @@ prrl:
 	docker compose exec nest-app npx prisma-repl
 
 rl:
-	docker-compose exec nest-app node -r ts-node/register ./src/scripts/repl.ts
+	yarn start --entryFile repl
+
   
 
 .PHONY: up down build logs rs prisma-generate prisma-migrate
