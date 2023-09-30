@@ -5,7 +5,8 @@ down:
 	docker-compose down
 
 build:
-	docker-compose up --build -d
+	docker-compose build --no-cache
+	docker-compose up --force-recreate -d
 
 logs:
 	docker-compose logs -f
@@ -15,16 +16,18 @@ rs: down up
 rb: down build
 
 gr:
-	npx prisma generate
+	yarn prisma generate
 
 mg:
-	docker-compose exec nest-app npx prisma migrate dev --preview-feature
+	docker-compose exec api npx prisma migrate dev
 
 prrl:
-	docker compose exec nest-app npx prisma-repl
+	docker compose exec api npx prisma-repl
 
 rl:
-	docker-compose exec nest-app node -r ts-node/register ./src/scripts/repl.ts
-  
+	yarn start --entryFile repl
 
-.PHONY: up down build logs rs prisma-generate prisma-migrate
+db:
+	docker compose exec db mysql -u root -P 3306
+
+.PHONY: up down build logs rs gr mg prrl rl db

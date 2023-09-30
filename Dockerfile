@@ -1,21 +1,24 @@
-# ベースイメージとしてNode.jsを指定
-FROM node:18
+# Base image
+FROM node:18-alpine
 
-# アプリケーションディレクトリを作成
+# Create app directory
 WORKDIR /usr/src/app
 
-# 依存関係のあるファイルをコピー
-COPY package*.json ./
+COPY package.json ./
 
-# パッケージをインストール
+COPY yarn.lock ./
+
+# Install app dependencies
 RUN yarn install
-# または npm install も可能
 
-# アプリケーションのソースをバンドルする
+# Bundle app source
 COPY . .
 
-# アプリケーションがリッスンするポートを指定
-EXPOSE 3000
+# Generate Prisma client from current schema.prisma
+RUN npx prisma generate
 
-# コマンドを実行
-CMD [ "yarn", "start:dev" ]
+# Creates a "dist" folder with the production build
+RUN yarn build
+
+# Start the server using the production build
+CMD [ "node", "dist/main.js" ]
